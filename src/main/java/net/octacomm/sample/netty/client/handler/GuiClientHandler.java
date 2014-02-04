@@ -1,6 +1,9 @@
 package net.octacomm.sample.netty.client.handler;
 
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -13,10 +16,6 @@ import net.octacomm.sample.netty.msg.PDU;
 import net.octacomm.sample.netty.msg.ResponseMessage;
 import net.octacomm.sample.service.listener.MessageUpdateListener;
 
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * @author tykim
  * 
  */
-public class GuiClientHandler extends SimpleChannelHandler implements ReceivedLock<ResponseMessage> {
+public class GuiClientHandler extends SimpleChannelInboundHandler<PDU> implements ReceivedLock<ResponseMessage> {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -44,12 +43,10 @@ public class GuiClientHandler extends SimpleChannelHandler implements ReceivedLo
 	public void removeMessageUpdateListener(MessageUpdateListener listener) {
 		listeners.remove(listener);
 	}
-	
-	@Override
-	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 
+	@Override
+	protected void channelRead0(ChannelHandlerContext ctx, PDU pdu) throws Exception {
 		logger.debug("MessageUpdateListener : {}", listeners);
-		PDU pdu = (PDU) e.getMessage();
 
 		if (pdu instanceof ResponseMessage) {
 			if (recvLock != null) {
@@ -64,7 +61,8 @@ public class GuiClientHandler extends SimpleChannelHandler implements ReceivedLo
 	}
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-		logger.error("{}", e.getCause());
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.error("{}", cause);
 	}
+
 }

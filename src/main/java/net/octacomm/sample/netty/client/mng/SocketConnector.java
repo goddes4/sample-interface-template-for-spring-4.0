@@ -1,15 +1,19 @@
 package net.octacomm.sample.netty.client.mng;
 
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+
 import java.net.InetSocketAddress;
-import java.util.concurrent.Executors;
 
 import net.octacomm.sample.netty.client.exception.ConnectionFailureException;
 
-import org.jboss.netty.bootstrap.ClientBootstrap;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,29 +22,29 @@ import org.slf4j.LoggerFactory;
  */
 public class SocketConnector implements Connector {
 	
-	private ClientBootstrap bootstrap = new ClientBootstrap(new NioClientSocketChannelFactory(
-									    		Executors.newCachedThreadPool(), 
-									    		Executors.newCachedThreadPool()));
-	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
+	
 	@Override
-    public Channel connect(String address, int port, ChannelPipelineFactory factory) throws ConnectionFailureException
-    {
-        // Configure the event pipeline factory.
-        bootstrap.setPipelineFactory(factory);
+	public Channel connect(String address, int port, ChannelInitializer<SocketChannel> channelInitializer) throws ConnectionFailureException {
+		EventLoopGroup group = new NioEventLoopGroup();
+		Bootstrap b = new Bootstrap();
+		b.group(group)
+			.channel(NioSocketChannel.class)
+			.option(ChannelOption.TCP_NODELAY, true)
+			.option(ChannelOption.SO_KEEPALIVE, true)
+			.handler(channelInitializer);
        
-        bootstrap.setOption("tcpNoDelay", true);
-        bootstrap.setOption("keepAlive", true);
-
         // Make a new connection.
-        ChannelFuture future = bootstrap.connect(new InetSocketAddress(address, port));
+        ChannelFuture future = b.connect(new InetSocketAddress(address, port));
         future.awaitUninterruptibly();
         if (!future.isSuccess()) {
-        	logger.error("connect fail : {}", future.getCause().getMessage());
-            throw new ConnectionFailureException(future.getCause());
+        	logger.error("connect fail : {}", future.cause().getMessage());
+        	group.shutdownGracefully();
+        	throw new ConnectionFailureException(future.cause());
         }
         
-        return future.getChannel();
-    }
+        return future.channel();
+	}
+
 }

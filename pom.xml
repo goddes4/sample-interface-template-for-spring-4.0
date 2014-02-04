@@ -15,14 +15,14 @@
 		<junit.version>4.11</junit.version>
 		
 		<!-- Spring : test, core, context, aop, jdbc -->
-		<springframework.version>3.2.3.RELEASE</springframework.version>
+		<springframework.version>4.0.0.RELEASE</springframework.version>
 		
 		<!-- Logging -->
 		<slf4j.version>1.7.5</slf4j.version>
 		<logback.version>1.0.13</logback.version>
 		
 		<!-- Java Network Framework -->
-		<jboss.netty.version>3.2.9.Final</jboss.netty.version>
+		<io.netty.version>4.0.15.Final</io.netty.version>
 		
 		<lombok.version>0.11.8</lombok.version>
 	</properties>
@@ -92,9 +92,9 @@
 		
 		<!-- Netty -->
 		<dependency>
-			<groupId>org.jboss.netty</groupId>
-			<artifactId>netty</artifactId>
-			<version>${jboss.netty.version}</version>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>${io.netty.version}</version>
 		</dependency>
 		
 	</dependencies>

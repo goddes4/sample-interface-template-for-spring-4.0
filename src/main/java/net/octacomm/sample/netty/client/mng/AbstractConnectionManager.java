@@ -1,5 +1,15 @@
 package net.octacomm.sample.netty.client.mng;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -10,16 +20,6 @@ import net.octacomm.sample.netty.msg.ExceptionResponseMessage;
 import net.octacomm.sample.netty.msg.RequestMessage;
 import net.octacomm.sample.netty.msg.ResponseMessage;
 
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
-import org.jboss.netty.channel.ChannelHandler;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.handler.codec.serialization.ClassResolvers;
-import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
-import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,14 +30,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager {
 	// connect 메소드에 의해서 연결 할때 마다 인스턴스가 변경됨
 	private Channel channel;
 
-	private ChannelPipelineFactory pipelineFactory = new ChannelPipelineFactory() {
+	private ChannelInitializer<SocketChannel> channelInitializer = new ChannelInitializer<SocketChannel>() {
 
 		@Override
-		public ChannelPipeline getPipeline() throws Exception {
-			return Channels.pipeline(
+		protected void initChannel(SocketChannel ch) throws Exception {
+			ch.pipeline().addLast(
 					new ObjectEncoder(),
-					new ObjectDecoder(10 * 1024 * 1024, ClassResolvers
-							.softCachingResolver(null)), clientHandler());
+					new ObjectDecoder(10 * 1024 * 1024, ClassResolvers.softCachingResolver(null)),
+					clientHandler());
 		}
 	};
 
@@ -53,13 +53,12 @@ public abstract class AbstractConnectionManager implements ConnectionManager {
 			throws ConnectionFailureException {
 		boolean result = false;
 
-		channel = new SocketConnector().connect(address, port, pipelineFactory);
+		channel = new SocketConnector().connect(address, port, channelInitializer);
 
 		if (channel != null) {
-			channel.getCloseFuture().addListener(new ChannelFutureListener() {
+			channel.closeFuture().addListener(new ChannelFutureListener() {
 				@Override
-				public void operationComplete(ChannelFuture arg0)
-						throws Exception {
+				public void operationComplete(ChannelFuture future) throws Exception {
 					notifyConnectionState(false);
 				}
 			});
@@ -93,7 +92,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager {
 		}
 
 		lock().getRecvLock().clear();
-		channel.write(packet);
+		channel.writeAndFlush(packet);
 
 		try {
 			senderThread = Thread.currentThread();
@@ -121,7 +120,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager {
 	public boolean isConnected() {
 		if (channel == null)
 			return false;
-		return channel.isConnected();
+		return channel.isActive();
 	}
 
 	@Override
