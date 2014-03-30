@@ -1,6 +1,7 @@
 package net.octacomm.sample.service;
 
-import net.octacomm.sample.service.listener.MessageUpdateListener;
+import net.octacomm.sample.service.listener.Message;
+import net.octacomm.sample.service.listener.MessageListener;
 import net.octacomm.sample.spring.SpringAccessor;
 import net.octacomm.sample.spring.SpringConfigInterface;
 
@@ -9,10 +10,10 @@ public class SpringLauncherTest {
 		SpringConfigInterface spring = SpringAccessor.getInstance();
 		try {
 			spring.getConnectionManager().connect("localhost", 9000);
-			spring.getEventManager().addMessageUpdatelistener(new MessageUpdateListener() {
+			spring.getEventManager().addMessageListener(new MessageListener() {
 				
 				@Override
-				public void updateReservist(String message) {
+				public void messageReceived(Message message) {
 					System.out.println(message);
 				}
 			});

@@ -3,7 +3,7 @@ package net.octacomm.sample.netty.client.mng;
 import io.netty.channel.ChannelHandler;
 import net.octacomm.sample.netty.client.handler.GuiClientHandler;
 import net.octacomm.sample.netty.msg.ResponseMessage;
-import net.octacomm.sample.service.listener.MessageUpdateListener;
+import net.octacomm.sample.service.listener.MessageListener;
 
 public class DefaultConnectionManager extends AbstractConnectionManager implements GuiEventManager {
 
@@ -19,15 +19,14 @@ public class DefaultConnectionManager extends AbstractConnectionManager implemen
 		return clientHandler;
 	}
 
-
 	@Override
-	public void addMessageUpdatelistener(MessageUpdateListener listener) {
-		clientHandler.addMessageUpdateListener(listener);
+	public void addMessageListener(MessageListener listener) {
+		clientHandler.addMessageListener(listener);
 	}
 
 	@Override
-	public void removeMessageUpdatelistener(MessageUpdateListener listener) {
-		clientHandler.removeMessageUpdateListener(listener);
+	public void removeMessageListener(MessageListener listener) {
+		clientHandler.removeMessageListener(listener);
 	}
 
 }

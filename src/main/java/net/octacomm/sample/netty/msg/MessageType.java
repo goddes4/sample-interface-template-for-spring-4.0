@@ -23,9 +23,10 @@ public enum MessageType {
     // 도메인 편집 요청 메시지
     DOMAIN_CRUD_REQUEST,
     DOMAIN_CRUD_RESPONSE,
+    DOMAIN_SEARCH_REQUEST,
     
-    // 훈련자 업데이트 통지 메시지
-    NOTIFY_MESSAGE_UPDATE_REQUEST,
+    // 메지시 통지 요청
+    NOTIFY_MESSAGE_REQUEST,
 
     // 예외 메시지
     EXCEPTION_RESPONSE,

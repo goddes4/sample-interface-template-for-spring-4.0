@@ -1,11 +1,10 @@
 package net.octacomm.sample.netty.client.mng;
 
-import net.octacomm.sample.service.listener.MessageUpdateListener;
+import net.octacomm.sample.service.listener.MessageListener;
 
 public interface GuiEventManager {
 
-	void addMessageUpdatelistener(MessageUpdateListener listener);
+	void addMessageListener(MessageListener listener);
 
-	void removeMessageUpdatelistener(MessageUpdateListener listener);
-
+	void removeMessageListener(MessageListener listener);
 }

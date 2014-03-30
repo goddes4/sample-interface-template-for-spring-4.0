@@ -11,8 +11,7 @@ import lombok.Getter;
  *
  */
 @Getter
-public abstract class AbstractRequestMessage<S, M extends ResponseMessage> extends PDU implements RequestMessage, MessageProcessor<S, M>
-{
+public abstract class AbstractRequestMessage<S, M extends ResponseMessage> extends PDU implements RequestMessage, MessageProcessor<S, M> {
 
 	public AbstractRequestMessage(MessageType messageType) {
 		super(messageType);

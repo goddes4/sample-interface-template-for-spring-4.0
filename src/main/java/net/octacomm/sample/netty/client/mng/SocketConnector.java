@@ -24,7 +24,6 @@ public class SocketConnector implements Connector {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
-	
 	@Override
 	public Channel connect(String address, int port, ChannelInitializer<SocketChannel> channelInitializer) throws ConnectionFailureException {
 		EventLoopGroup group = new NioEventLoopGroup();

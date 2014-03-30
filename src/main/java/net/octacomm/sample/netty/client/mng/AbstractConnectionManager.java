@@ -49,8 +49,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager {
 	protected abstract ChannelHandler clientHandler();
 	
 	@Override
-	public boolean connect(String address, int port)
-			throws ConnectionFailureException {
+	public boolean connect(String address, int port) throws ConnectionFailureException {
 		boolean result = false;
 
 		channel = new SocketConnector().connect(address, port, channelInitializer);

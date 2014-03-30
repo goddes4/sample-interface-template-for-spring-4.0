@@ -11,7 +11,8 @@ import net.octacomm.sample.netty.msg.domain.DomainCRUDRequestMessage;
 import net.octacomm.sample.netty.msg.domain.DomainCRUDResponseMessage;
 import net.octacomm.sample.netty.msg.domain.DomainListRequestMessage;
 import net.octacomm.sample.netty.msg.domain.DomainListResponseMessage;
-import net.octacomm.sample.service.CRUDService;
+import net.octacomm.sample.netty.msg.domain.DomainSearchRequestMessage;
+import net.octacomm.sample.service.crud.CRUDService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,7 +23,8 @@ public abstract class NettyCRUDService<T extends Domain> implements CRUDService<
 	
 	private DomainListRequestMessage domainListMsg = new DomainListRequestMessage(getDomainClass());
 	protected DomainCRUDRequestMessage domainCRUDMsg = new DomainCRUDRequestMessage(getDomainClass());
-
+	private DomainSearchRequestMessage domainSearchMsg = new DomainSearchRequestMessage(getDomainClass());
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> getList() throws ConnectionFailureException {
@@ -64,19 +66,6 @@ public abstract class NettyCRUDService<T extends Domain> implements CRUDService<
 		
 		return res.isResult();
 	}
-
-	@Override
-	public boolean deleteSelection(List<T> domains) throws ConnectionFailureException {
-		domainCRUDMsg.setCrudType(CRUDType.DELETE_SELECTION);
-		DomainCRUDResponseMessage res = sendDomainCRUDReq(domains);
-		
-		return res.isResult();
-	}
-	
-	protected DomainCRUDResponseMessage sendDomainCRUDReq(List<T> domains) {
-		domainCRUDMsg.setDomains(domains);
-		return sendDomainCRUDReq();
-	}
 	
 	protected DomainCRUDResponseMessage sendDomainCRUDReq(T domain) {
 		domainCRUDMsg.setDomain(domain);
@@ -88,4 +77,12 @@ public abstract class NettyCRUDService<T extends Domain> implements CRUDService<
 		return (DomainCRUDResponseMessage) response;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<T> getListByCondition(T domain) {
+		domainSearchMsg.setDomain(domain);
+		ResponseMessage response = connectionManager.sendMessage(domainSearchMsg);
+
+		return (List<T>) ((DomainListResponseMessage) response).getResources();
+	}
 }

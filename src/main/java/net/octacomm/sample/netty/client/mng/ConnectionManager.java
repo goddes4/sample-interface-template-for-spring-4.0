@@ -3,8 +3,8 @@ package net.octacomm.sample.netty.client.mng;
 import net.octacomm.sample.netty.msg.RequestMessage;
 import net.octacomm.sample.netty.msg.ResponseMessage;
 
-public interface ConnectionManager
-{
+public interface ConnectionManager {
+	
 	boolean connect(String address, int port);
 	
 	void disconnect();

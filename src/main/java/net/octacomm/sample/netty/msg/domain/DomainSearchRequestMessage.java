@@ -11,8 +11,8 @@ import net.octacomm.sample.netty.msg.MessageType;
 import net.octacomm.sample.service.crud.CRUDService;
 
 /**
- * 도메인 리스트 요청
- * 1. domainClass에 요청할 클래스를 등록
+ * 도메인 검색 요청 메시지
+ * - 검색 조건에 해당되는 도메인 리스트를 요청
  * 
  * Direction : GUI --> Server
  * 
@@ -22,18 +22,21 @@ import net.octacomm.sample.service.crud.CRUDService;
 @Setter
 @Getter
 @ToString
-public class DomainListRequestMessage extends AbstractRequestMessage<CRUDService<Domain>, DomainListResponseMessage> {
+public class DomainSearchRequestMessage extends AbstractRequestMessage<CRUDService<Domain>, DomainListResponseMessage> {
+	
+	private Domain domain;
 	
 	private Class<? extends Domain> domainClass;
 	
-	public DomainListRequestMessage(Class<? extends Domain> domainClass) {
-		super(MessageType.DOMAIN_LIST_REQUEST);
+	public DomainSearchRequestMessage(Class<? extends Domain> domainClass) {
+		super(MessageType.DOMAIN_SEARCH_REQUEST);
 		this.domainClass = domainClass;
 	}
 
 	@Override
-	public DomainListResponseMessage process(CRUDService<Domain> crudService) {
-		List<? extends Domain> domains = crudService.getList();
+	public DomainListResponseMessage process(CRUDService<Domain> service) {
+		List<? extends Domain> domains = service.getListByCondition(domain);
 		return new DomainListResponseMessage(true, domains);
 	}
+
 }

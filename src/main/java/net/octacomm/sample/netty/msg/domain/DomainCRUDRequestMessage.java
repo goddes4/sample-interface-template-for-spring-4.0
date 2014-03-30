@@ -1,14 +1,12 @@
 package net.octacomm.sample.netty.msg.domain;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.octacomm.sample.domain.Domain;
 import net.octacomm.sample.netty.msg.AbstractRequestMessage;
 import net.octacomm.sample.netty.msg.MessageType;
-import net.octacomm.sample.service.CRUDService;
+import net.octacomm.sample.service.crud.CRUDService;
 
 /**
  * 도메인 편집 요청 메시지
@@ -29,7 +27,6 @@ public class DomainCRUDRequestMessage extends AbstractRequestMessage<CRUDService
 	private Domain domain;
 	private CRUDType crudType;
 	private Class<? extends Domain> domainClass;
-	private List<? extends Domain> domains;
 	
 	public DomainCRUDRequestMessage(Class<? extends Domain> domainClass) {
 		super(MessageType.DOMAIN_CRUD_REQUEST);
@@ -44,11 +41,7 @@ public class DomainCRUDRequestMessage extends AbstractRequestMessage<CRUDService
 		switch (crudType) {
 			case REGIST:
 				// MySQL에의 자동 생성되는 Key경우에는 GUI에 알려야 한다.
-//				try {
-					ret = crudService.add(domain);
-//				} catch (DuplicateKeyException e) {
-//					logger.error("{}", e.getMessage());
-//				}
+				ret = crudService.add(domain);
 				break;
 				
 			case UPDATE:
@@ -59,13 +52,6 @@ public class DomainCRUDRequestMessage extends AbstractRequestMessage<CRUDService
 				ret = crudService.delete(domain);
 				break;
 
-			case DELETE_SELECTION:
-				List<Domain> domains = (List<Domain>) getDomains();
-				if (domains != null && domains.size() > 0) {
-					ret = crudService.deleteSelection(domains);
-				}
-				break;
-				
 			case DELETE_ALL:
 				ret = crudService.deleteAll();
 				break;
