@@ -91,7 +91,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager {
 		}
 
 		lock().getRecvLock().clear();
-		channel.writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);;
+		channel.writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 
 		try {
 			senderThread = Thread.currentThread();
