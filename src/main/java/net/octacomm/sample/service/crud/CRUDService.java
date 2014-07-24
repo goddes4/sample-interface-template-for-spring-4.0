@@ -15,18 +15,18 @@ public interface CRUDService<T extends Domain> {
 	@Cacheable(value = CACHE_NAME, key = CACHE_KEY)
 	List<T> getList();
 	
-	@CacheEvict(value = CACHE_NAME, key = CACHE_KEY, allEntries = true)
-	boolean add(T t);
+	@CacheEvict(value = CACHE_NAME, key = CACHE_KEY)
+	boolean add(T domain);
 
-	@CacheEvict(value = CACHE_NAME, key = CACHE_KEY, allEntries = true)
-	boolean edit(T t);
+	@CacheEvict(value = CACHE_NAME, key = CACHE_KEY)
+	boolean edit(T domain);
 	
-	@CacheEvict(value = CACHE_NAME, key = CACHE_KEY, allEntries = true)
-	boolean delete(T t);
+	@CacheEvict(value = CACHE_NAME, key = CACHE_KEY)
+	boolean delete(T domain);
 	
-	@CacheEvict(value = CACHE_NAME, key = CACHE_KEY, allEntries = true)
+	@CacheEvict(value = CACHE_NAME, key = CACHE_KEY)
 	boolean deleteAll();
 	
-	List<T> getListByCondition(T t);
+	List<T> getListByCondition(T domain);
 	
 }
