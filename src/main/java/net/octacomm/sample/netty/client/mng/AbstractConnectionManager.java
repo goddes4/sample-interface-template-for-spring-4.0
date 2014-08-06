@@ -90,7 +90,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager {
 			throw new ConnectionFailureException();
 		}
 
-		lock().getRecvLock().clear();
 		channel.writeAndFlush(packet).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
 
 		try {
