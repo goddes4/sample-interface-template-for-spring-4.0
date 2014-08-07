@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 import lombok.Getter;
 import net.octacomm.sample.netty.client.mng.ReceivedLock;
@@ -52,7 +53,7 @@ public class GuiClientHandler extends SimpleChannelInboundHandler<PDU> implement
 
 		if (pdu instanceof ResponseMessage) {
 			if (recvLock != null) {
-				recvLock.offer((ResponseMessage) pdu);
+				recvLock.offer((ResponseMessage) pdu, 500, TimeUnit.MILLISECONDS);
 			}
 		} else {
 			NotifyMessageRequestMessage req = (NotifyMessageRequestMessage) pdu;
